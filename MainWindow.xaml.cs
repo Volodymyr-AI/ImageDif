@@ -39,7 +39,7 @@ namespace ImageDif
                 DroppedImage.Source = image;
 
                 // Save the image to the DownloadableImages folder
-                string savePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "DownloadableImages", Path.GetFileName(filePath));
+                string savePath = Path.Combine("D:\\University\\Img\\ImageDif\\DownloadableImages", Path.GetFileName(filePath));
                 string directoryPath = Path.GetDirectoryName(savePath);
                 if (!Directory.Exists(directoryPath))
                 {
