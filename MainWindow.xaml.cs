@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using ImageDif.Core;
+using LiveCharts;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,9 +21,16 @@ namespace ImageDif
     /// </summary>
     public partial class MainWindow : Window
     {
+        //public ObservableCollection<Graph> Graphs { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+
+            //Graphs = new ObservableCollection<Graph>();
+
+            var values = new ChartValues<double> { 0, 1, 2, 3, 4, 5, 6 };
+            chart.Series[0].Values = values;
+            chart.AxisY[0].MinValue = 0;
         }
 
         private void Border_Drop(object sender, DragEventArgs e)
