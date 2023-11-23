@@ -1,17 +1,8 @@
-﻿using ImageDif.Core;
-using LiveCharts;
-using System.Collections.ObjectModel;
+﻿using LiveCharts;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace ImageDif
@@ -21,17 +12,14 @@ namespace ImageDif
     /// </summary>
     public partial class MainWindow : Window
     {
-        //public ObservableCollection<Graph> Graphs { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-
-            //Graphs = new ObservableCollection<Graph>();
-
-            var values = new ChartValues<double> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
-            chart.Series[0].Values = values;
+            
             chart.AxisY[0].MinValue = 0;
-            chart.AxisY[0].MaxValue = 30;
+            chart.AxisX[0].MinValue = 0;
+            chart.AxisY[0].LabelFormatter = value => value.ToString("F2");
+            chart.AxisX[0].LabelFormatter = value => value.ToString("F2");
         }
 
         private void Border_Drop(object sender, DragEventArgs e)
@@ -143,20 +131,29 @@ namespace ImageDif
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             // Call the SaveImage method for each image
-            SaveImage(DroppedImage, "D:\\University\\Img\\ImageDif\\DownloadableImages\\saved_image1.jpg");
-            SaveImage(DroppedImage2, "D:\\University\\Img\\ImageDif\\DownloadableImages\\saved_image2.jpg");
+            SaveImage(DroppedImage, "D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image1.jpg");
+            SaveImage(DroppedImage2, "D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image2.jpg");
+
+            // Calculate statistic for each image
+            var statistic1 = CalculateStatistic("D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image1.jpg");
+            var statistic2 = CalculateStatistic("D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image2.jpg");
+
+            // Use the statistic to build the charts
+            chart.Series[0].Values = new ChartValues<double>(statistic1);
+            chart.Series[1].Values = new ChartValues<double>(statistic2);
         }
         private void DeleteImage(Image image)
         {
             // Get the directory path
             string directoryPath = "D:\\University\\Img\\ImageDif\\DownloadableImages";
+            string savedPath = "D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved";
 
             // Check if the directory exists
-            if (Directory.Exists(directoryPath))
+            if (Directory.Exists(directoryPath) && Directory.Exists(savedPath))
             {
                 // Delete all files in the directory
                 Directory.EnumerateFiles(directoryPath).ToList().ForEach(File.Delete);
-
+                Directory.EnumerateFiles(savedPath).ToList().ForEach(File.Delete);
                 // Clear the DroppedImage control
                 image.Source = null;
             }
@@ -172,7 +169,50 @@ namespace ImageDif
         {
             System.Diagnostics.Process.Start("explorer.exe", @"D:\University\Img\ImageDif\DownloadableImages");
         }
-    }
+
+        private List<double> CalculateStatistic(string imagePath)
+        {
+            using (var image = new System.Drawing.Bitmap(imagePath))
+            {
+                // Calculation of statistical characteristics
+                // In this example we will use the average color value of the image
+                List<double> values = new List<double>();
+                for (int y = 0; y < image.Height; y++)
+                {
+                    double sum = 0;
+                    for (int x = 0; x < image.Width; x++)
+                    {
+                        var pixel = image.GetPixel(x, y);
+                        sum += pixel.GetBrightness();
+                    }
+                    values.Add(sum / image.Width);
+                }
+                return values;
+            }
+        }
+        private async void Build_Click(object sender, RoutedEventArgs e)
+        {
+            // Call the SaveImage method for each image
+            SaveImage(DroppedImage, "D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image1.jpg");
+            SaveImage(DroppedImage2, "D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image2.jpg");
+
+            // Calculate statistic for each image
+            var statistic1 = CalculateStatistic("D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image1.jpg");
+            var statistic2 = CalculateStatistic("D:\\University\\Img\\ImageDif\\DownloadableImages\\Saved\\saved_image2.jpg");
+
+            // Find the maximum value in the first statistic
+            var max1 = statistic1.Max();
+
+            // Scale the second statistic by the maximum value of the first statistic
+            var scaledStatistic2 = statistic2.Select(value => value * max1 / statistic2.Max()).ToList();
+
+            // Use the statistic to build the charts
+            chart.AxisY[0].MinValue = 0;
+            chart.AxisX[0].MinValue = 0;
+            chart.Series[0].Values = new ChartValues<double>(statistic1);
+            chart.Series[1].Values = new ChartValues<double>(scaledStatistic2);
+        }
+    } 
 }
 
 // checking if saved imge exists
@@ -181,3 +221,8 @@ namespace ImageDif
 //{
 //    DroppedImage.Source = new BitmapImage(new Uri(imagePath));
 //}
+
+
+//var values = new ChartValues<double> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+//chart.Series[0].Values = values;
+//chart.AxisY[0].MaxValue = 30;
