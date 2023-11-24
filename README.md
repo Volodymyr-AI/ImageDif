@@ -4,6 +4,7 @@ This project involves the comparison of two or more images of varying sizes stor
 ## Technology Used
 + Framework: Windows Presentation Foundation (WPF)
 + Chart Library: LiveCharts
++ .Net8
 
 ## Task Overview
 1. Data Preparation:
@@ -21,8 +22,10 @@ This project involves the comparison of two or more images of varying sizes stor
 ## Instructions for Use
 + Clone the repository and open the solution in Visual Studio.
 + Ensure that the LiveCharts library is correctly referenced.
-+ Run the application to load and compare images.
-+ Use the Scale button to standardize the charts for better visual analysis.
++ Run the application
++ Download two different .jpg images into empty fields and push "Save"
++ Push "Process image" to build scaled chart
++ To start with other images push "Reset"
 ## Additional Notes
 + This project is implemented using WPF for the user interface and LiveCharts to create interactive and dynamic charts.
 + Feel free to customize and extend the functionality based on your specific requirements.
