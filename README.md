@@ -5,7 +5,7 @@ This project involves the comparison of two or more images of varying sizes stor
 + Framework: Windows Presentation Foundation (WPF)
 + Chart Library: LiveCharts
 
-##Task Overview
+## Task Overview
 1. Data Preparation:
   + Load two or more images of different sizes into memory.
   + Compute statistical characteristics for each image.
